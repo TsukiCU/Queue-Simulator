@@ -1,6 +1,6 @@
 ## Queue-Simulator
 
-This is a M/M/c simulator written in C++. The model is designed to adapt M/M/C, with different numbers of servers by utilizing multithreading, as long as modern C++ features such as mutex locks, condition variables and smart pointers to avoid data race.
+This is a M/M/c simulator written in C++. The model is designed to adapt M/M/C, with different numbers of servers by utilizing multithreading, as long as modern C++ features such as mutex locks, condition variables and smart pointers to avoid data racing.
 The code was fully tested under **Ubuntu 22.04 (kernel 5.15.0)** , **ARM64** architecture , using **GCC** and **Clang**.
 
 ### Features
@@ -24,11 +24,11 @@ The code provides an option to visualize the results but needs you to install `m
 If you are on Linux(Ubuntu)
 ```
 apt install python-dev, python-pip3
-pip3 install matplotlib, nump
+pip3 install matplotlib, numpy
 clone matplotlib project and place matplotlibcpp.h in the workplace.
 ```
 
-If you find it annoying to do all this (which I can totally relate), the good new is by default, PLOT is set to 0, and the visualization function is disabled. You can still run the program successfully, and test all other functionalities by running : 
+If you find it annoying to do all this, by default PLOT is set to 0, the visualization function is disabled. You can still run the program successfully, and test all other functionalities by running : 
 
 `make`
 
@@ -58,7 +58,7 @@ Lq : Queue Length
 | 0.9          | 1.0          | 1             | 7.99084    |  9.22552   |	  0.892315		 |
 | 0.9          | 1.0          | 2             | 1.76244    |  1.41942   |	  0.717868       |
 
-Observations
+#### Observations
 
 1.	Adding server number is good. It reduces queue length (Lq) and response time (Tr), e.g., for arrival rate 0.5, Tr drops from 1.44 (1 server) to 0.52 (2 servers).
 
@@ -76,6 +76,5 @@ Apparently, There are discrepencies in utilization rate that can't be ignored be
 
 ### TODO
 
-1. Provide a docker container to save the users from installing packages they might never need.
-2. Support more models like M/M/c/k.
-3. There could be performance bottleneck as the number of servers grow too high. Use techniques like thread pool to enhance performance and reduce data racing.
+1. Support models like M/M/c/k for extensibility.
+2. There could be performance bottleneck as the number of servers grow too high. Use techniques like thread pool for better performance.
