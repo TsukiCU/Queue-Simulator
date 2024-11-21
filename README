@@ -1,0 +1,78 @@
+## Simulator
+
+This is a simulator written in C++. The model is designed to adapt M/M/C, with different numbers of servers by utilizing multithreading, as long as modern C++ features such as mutex locks, condition variables and smart pointers to avoid data race.
+The code was fully tested under **Ubuntu 22.04 (kernel 5.15.0)** , **ARM64** architecture , using **GCC** and **Clang**.
+
+### Features
+
+1.	Multithreading:
+	•	Support servers of any number while each is simulated as an independent thread.
+	•	Synchronization is ensured by using mutex locks and condition variables.
+2.	Event-Driven Simulation:
+	•	The simulation operates in an event-driven manner, as arrivals and departures are treated as *events*, and are processed in chronological order.
+	•	This approach is efficient and mirrors real-world queueing systems.
+3. Warm up stage
+	•	Add warm up stage to stabalise the results.
+4.	Visualization (Optional):
+	•	Generate histograms of queue lengths and plots of average queue lengths over time (requires MatplotlibCPP).
+
+### How to run
+
+#### Compile
+The code provides an option to visualize the results but needs you to install `matplotlibcpp` first, this can be done by: 
+
+If you are on Linux(Ubuntu)
+```
+apt install python-dev, python-pip3
+pip3 install matplotlib, nump
+clone matplotlib project and place matplotlibcpp.h in the workplace.
+```
+
+If you find it annoying to do all this (which I can totally relate), the good new is by default, PLOT is set to 0, and the visualization function is disabled. You can still run the program successfully, and test all other functionalities by running : 
+
+`make`
+
+If you succefully install it, you can view the result by setting PLOT to 1.
+
+`make plot`
+
+Note: Ensure you are using **Python 3.10**, as the Makefile includes the `-lpython3.10` flag. or switch this flag manually to whichever versions of Python is installed on your machine, but it's not guaranteed that version conflicts won't happen.
+
+#### Run
+
+```./mmc <arrival rate> <process rate> <number of servers> <warm_up_time>```
+Note, those values have to make sense. The program exits and does nothing if unreasonable inputs are received.
+
+### Analysis
+
+It is recommended to choose warm up period with caution.
+
+| Arrival Rate | Process Rate | Server Number | Average Lq | Average Tr |Server Utilization |
+|--------------|--------------|---------------|------------|------------|-------------------|
+| 0.5          | 1.0          | 1             | 1.11137    |   1.43577	|     0.835526      |
+| 0.5          | 1.0          | 2             | 0.825797   | 0.663189           |
+| 0.7          | 1.0          | 1             | 2.4273     | 0.926583           |
+| 0.7          | 1.0          | 2             | 1.08514    | 0.737653           |
+| 0.9          | 1.0          | 1             | 8.46448    | 0.97546            |
+| 0.9          | 1.0          | 2             | 1.42857    | 0.786096           |
+
+Observations
+
+1. Single Server (M/M/1):
+	•	As the arrival rate (lambda) approaches the service rate (mu), the average queue length ( L_q ) and server utilization increase significantly.
+	•	For lambda = 0.9 , the system nears instability, leading to very high queue lengths and response times.
+2. Multiple Servers (M/M/2):
+	•	Adding more servers reduces the average queue length and response times.
+	•	The system remains stable even for high arrival rates (lambda = 0.9), showcasing the benefits of parallel service.
+
+### Issues
+
+Apparently, There are gaps that can't be ignored between theoratical values and test results. This can be due to:
+
+1. Though carefully examined, there are still some bugs or logical errors in the code especially in multithreading context.
+
+### TODO
+
+1. Provide a docker container to save the users from installing packages they might never need.
+2. Support more models like M/M/c/k.
+3. There could be performance bottleneck as the number of servers grow too high. Use techniques like thread pool to enhance performance and reduce data racing.
