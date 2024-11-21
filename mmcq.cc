@@ -15,7 +15,11 @@ MMCQueue::MMCQueue(double arrivalRate, double serviceRate, int numServers, doubl
     }
     else if (arrivalRate >= serviceRate * numServers) {
         exit = true;
-        std::cerr << "Can't deal with that, can we? Exiting.." << std::endl;
+        std::cerr << "Can't deal with that, can we? Exiting.. " << std::endl;
+    }
+    else if (warmUpTime <= 0) {
+        exit = true;
+        std::cerr << "Gonna need a nice warm up time. Exiting.. " << std::endl;
     }
 }
 
@@ -76,7 +80,7 @@ void MMCQueue::runSimulation(int totalCustomers) {
                     lock.lock();
                 } else {
                     // cv will be checked again upon wakeup, that's why this "else" is necessary here.
-                    // in case a spurious wakeup, release the lock so that other threads may proceed.
+                    // in case of spurious wakeup, release the lock so that other threads may proceed.
                     lock.unlock();
                 }
 

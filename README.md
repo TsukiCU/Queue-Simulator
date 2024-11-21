@@ -1,6 +1,6 @@
-## Simulator
+## Queue-Simulator
 
-This is a simulator written in C++. The model is designed to adapt M/M/C, with different numbers of servers by utilizing multithreading, as long as modern C++ features such as mutex locks, condition variables and smart pointers to avoid data race.
+This is a M/M/c simulator written in C++. The model is designed to adapt M/M/C, with different numbers of servers by utilizing multithreading, as long as modern C++ features such as mutex locks, condition variables and smart pointers to avoid data race.
 The code was fully tested under **Ubuntu 22.04 (kernel 5.15.0)** , **ARM64** architecture , using **GCC** and **Clang**.
 
 ### Features
@@ -45,31 +45,34 @@ Note, those values have to make sense. The program exits and does nothing if unr
 
 ### Analysis
 
-It is recommended to choose warm up period with caution.
+It is recommended to choose reasonable warm up period.
+Tr : Response Time
+Lq : Queue Length
 
-| Arrival Rate | Process Rate | Server Number | Average Lq | Average Tr |Server Utilization |
-|--------------|--------------|---------------|------------|------------|-------------------|
-| 0.5          | 1.0          | 1             | 1.11137    |   1.43577	|     0.835526      |
-| 0.5          | 1.0          | 2             | 0.825797   | 0.663189           |
-| 0.7          | 1.0          | 1             | 2.4273     | 0.926583           |
-| 0.7          | 1.0          | 2             | 1.08514    | 0.737653           |
-| 0.9          | 1.0          | 1             | 8.46448    | 0.97546            |
-| 0.9          | 1.0          | 2             | 1.42857    | 0.786096           |
+| Arrival Rate | Process Rate | Server Number | Average Lq | Average Tr | Server Utilization |
+|--------------|--------------|---------------|------------|------------|--------------------|
+| 0.5          | 1.0          | 1             | 1.11137    |  1.43577	|     0.735526       |
+| 0.5          | 1.0          | 2             | 0.600691   |  0.523404  | 	  0.568028	     |
+| 0.7          | 1.0          | 1             | 2.2648     |  2.841971  |     0.856693       |
+| 0.7          | 1.0          | 2             | 0.930956   |  0.769445  |	  0.654332		 |
+| 0.9          | 1.0          | 1             | 7.99084    |  9.22552   |	  0.892315		 |
+| 0.9          | 1.0          | 2             | 1.76244    |  1.41942   |	  0.717868       |
 
 Observations
 
-1. Single Server (M/M/1):
-	•	As the arrival rate (lambda) approaches the service rate (mu), the average queue length ( L_q ) and server utilization increase significantly.
-	•	For lambda = 0.9 , the system nears instability, leading to very high queue lengths and response times.
-2. Multiple Servers (M/M/2):
-	•	Adding more servers reduces the average queue length and response times.
-	•	The system remains stable even for high arrival rates (lambda = 0.9), showcasing the benefits of parallel service.
+1.	Adding server number is good. It reduces queue length (Lq) and response time (Tr), e.g., for arrival rate 0.5, Tr drops from 1.44 (1 server) to 0.52 (2 servers).
+
+2.	As arrival rates rise (e.g., from 0.5 to 0.9), Lq and Tr increase significantly, especially with fewer servers.
+
+3.	Utilization decreases with more servers, but is oddly higher than theoratical value.
 
 ### Issues
 
-Apparently, There are gaps that can't be ignored between theoratical values and test results. This can be due to:
+Apparently, There are discrepencies in utilization rate that can't be ignored between theoratical values and test results. This can be due to:
 
 1. Though carefully examined, there are still some bugs or logical errors in the code especially in multithreading context.
+
+2. At some point, the servers are overloaded with customers.
 
 ### TODO
 
